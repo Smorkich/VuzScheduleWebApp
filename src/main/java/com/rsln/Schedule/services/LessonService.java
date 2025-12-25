@@ -1,7 +1,14 @@
 package com.rsln.Schedule.services;
 
-import com.rsln.Schedule.models.Lesson;
-import com.rsln.Schedule.repositories.LessonRepository;
+import com.rsln.Schedule.dtos.lesson.LessonRequestDto;
+import com.rsln.Schedule.dtos.lesson.LessonResponseDto;
+import com.rsln.Schedule.exceptions.NotFoundException;
+import com.rsln.Schedule.mappers.ClassroomMapper;
+import com.rsln.Schedule.mappers.LessonMapper;
+import com.rsln.Schedule.models.*;
+import com.rsln.Schedule.repositories.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -12,45 +19,96 @@ import java.util.List;
 public class LessonService {
 
     private final LessonRepository lessonRepository;
+    private final ClassroomRepository classroomRepository;
+    private final GroupRepository groupRepository;
+    private final SubjectRepository subjectRepository;
+    private final TeacherRepository teacherRepository;
+    private final LessonMapper lessonMapper;
+    private static final Logger log =
+            LoggerFactory.getLogger(LessonService.class);
 
-    public LessonService(LessonRepository lessonRepository) {
+    public LessonService(LessonRepository lessonRepository, ClassroomRepository classroomRepository, GroupRepository groupRepository, SubjectRepository subjectRepository, TeacherRepository teacherRepository, LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
+        this.classroomRepository = classroomRepository;
+        this.groupRepository = groupRepository;
+        this.subjectRepository = subjectRepository;
+        this.teacherRepository = teacherRepository;
+        this.lessonMapper = lessonMapper;
     }
 
-    public List<Lesson> getAll() {
-        return lessonRepository.findAll();
+    public List<LessonResponseDto> getAll() {
+        log.info("get all Lessons");
+        return lessonRepository.findAll().stream().map(lessonMapper::toDto).toList();
     }
 
-    public Lesson getById(Long id) {
-        return lessonRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+    public LessonResponseDto getById(Long id) {
+        log.info("get Lesson by id: {}", id);
+        Lesson lesson = lessonRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Занятие не найдено"));
+        return lessonMapper.toDto(lesson);
     }
 
-    public Lesson create(Lesson lesson) {
-        return lessonRepository.save(lesson);
+    public LessonResponseDto create(LessonRequestDto dto) {
+        log.info(
+                "Создание занятия: groupId={}, teacherId={}, day={}, time={}–{}",
+                dto.groupId(),
+                dto.teacherId(),
+                dto.dayOfWeek(),
+                dto.startTime(),
+                dto.endTime()
+        );
+        Lesson lesson = lessonMapper.toEntity(dto);
+        lessonRepository.save(lesson);
+        return lessonMapper.toDto(lesson);
     }
 
-    public Lesson update(Long id, Lesson updated) {
-        Lesson lesson = getById(id);
+    public LessonResponseDto update(Long id, LessonRequestDto dto) {
+        log.info(
+                "update lesson: groupId={}, teacherId={}, day={}, time={}–{}",
+                dto.groupId(),
+                dto.teacherId(),
+                dto.dayOfWeek(),
+                dto.startTime(),
+                dto.endTime()
+        );
+        Lesson lesson = lessonRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Занятие не найдено"));
 
-        lesson.setGroup(updated.getGroup());
-        lesson.setTeacher(updated.getTeacher());
-        lesson.setSubject(updated.getSubject());
-        lesson.setClassroom(updated.getClassroom());
-        lesson.setLessonType(updated.getLessonType());
-        lesson.setDayOfWeek(updated.getDayOfWeek());
-        lesson.setStartTime(updated.getStartTime());
-        lesson.setEndTime(updated.getEndTime());
+        Group group = groupRepository.findById(dto.groupId())
+                .orElseThrow(() -> new NotFoundException("Группа не найдена"));
 
-        return lessonRepository.save(lesson);
+        Subject subject = subjectRepository.findById(dto.subjectId())
+                .orElseThrow(() -> new NotFoundException("Предмет не найден"));
+
+        Teacher teacher = teacherRepository.findById(dto.teacherId())
+                .orElseThrow(() -> new NotFoundException("Преподаватель не найден"));
+
+        Classroom classroom = classroomRepository.findById(dto.classroomId())
+                .orElseThrow(() -> new NotFoundException("Аудитория не найдена"));
+
+        lessonMapper.updateEntity(
+                lesson,
+                dto,
+                group,
+                subject,
+                teacher,
+                classroom
+        );
+
+        return lessonMapper.toDto(lessonRepository.save(lesson));
     }
 
     public void delete(Long id) {
+        log.info("delete lesson by id: {}", id);
         lessonRepository.deleteById(id);
     }
 
-    public List<Lesson> getByGroupAndDay(Long groupId, DayOfWeek day) {
-        return lessonRepository.findByGroupIdAndDayOfWeek(groupId, day).orElseThrow(()
-                -> new RuntimeException("Lesson not found"));
+    public List<LessonResponseDto> getByGroupAndDay(Long groupId, DayOfWeek day) {
+        log.info("get lesson by groupId and day: groupId={}, day={}", groupId, day.toString());
+        return lessonRepository.findByGroupIdAndDayOfWeek(groupId, day)
+                .orElseThrow(() -> new NotFoundException("Lesson not found"))
+                .stream()
+                .map(lessonMapper::toDto)
+                .toList();
     }
 }
