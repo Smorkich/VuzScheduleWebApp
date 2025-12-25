@@ -6,11 +6,19 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
 @Table(name = "classrooms")
 public class Classroom extends BaseEntity {
     @Column(nullable = false)
     private String name;
+
+    public Classroom() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
