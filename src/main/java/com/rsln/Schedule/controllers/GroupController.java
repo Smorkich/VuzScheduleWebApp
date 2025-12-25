@@ -1,13 +1,18 @@
 package com.rsln.Schedule.controllers;
 
-import com.rsln.Schedule.models.Group;
+import com.rsln.Schedule.dtos.group.GroupRequestDto;
+import com.rsln.Schedule.dtos.group.GroupResponseDto;
 import com.rsln.Schedule.services.GroupService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
+@Tag(name = "Groups", description = "Управление учебными группами")
 public class GroupController {
 
     private final GroupService groupService;
@@ -17,27 +22,41 @@ public class GroupController {
     }
 
     @GetMapping
-    public List<Group> getAll() {
+    @Operation(summary = "Получить список всех групп")
+    public List<GroupResponseDto> getAll() {
         return groupService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Group getById(@PathVariable Long id) {
+    @Operation(summary = "Получить данные группы по ID")
+    public GroupResponseDto getById(
+            @Parameter(description = "ID группы") @PathVariable Long id
+    ) {
         return groupService.getById(id);
     }
 
     @PostMapping
-    public Group create(@RequestBody Group group) {
+    @Operation(summary = "Создать новую группу")
+    public GroupResponseDto create(
+            @Parameter(description = "Данные новой группы") @RequestBody GroupRequestDto group
+    ) {
         return groupService.create(group);
     }
 
     @PutMapping("/{id}")
-    public Group update(@PathVariable Long id, @RequestBody Group updated) {
+    @Operation(summary = "Обновить данные группы")
+    public GroupResponseDto update(
+            @Parameter(description = "ID группы") @PathVariable Long id,
+            @Parameter(description = "Обновлённые данные") @RequestBody GroupRequestDto updated
+    ) {
         return groupService.update(id, updated);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @Operation(summary = "Удалить группу")
+    public void delete(
+            @Parameter(description = "ID группы") @PathVariable Long id
+    ) {
         groupService.delete(id);
     }
 }

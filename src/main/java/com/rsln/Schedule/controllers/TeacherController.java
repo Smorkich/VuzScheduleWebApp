@@ -1,13 +1,20 @@
 package com.rsln.Schedule.controllers;
 
+import com.rsln.Schedule.dtos.teacher.TeacherRequestDto;
+import com.rsln.Schedule.dtos.teacher.TeacherResponseDto;
 import com.rsln.Schedule.models.Teacher;
 import com.rsln.Schedule.services.TeacherService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/teachers")
+@Tag(name = "Teachers", description = "Управление преподавателями")
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -17,27 +24,43 @@ public class TeacherController {
     }
 
     @GetMapping
-    public List<Teacher> getAll() {
+    @Operation(summary = "Получить список преподавателей")
+    public List<TeacherResponseDto> getAll() {
         return teacherService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Teacher getById(@PathVariable Long id) {
+    @Operation(summary = "Получить преподавателя по ID")
+    public TeacherResponseDto getById(
+            @Parameter(description = "ID преподавателя") @PathVariable Long id
+    ) {
         return teacherService.getById(id);
     }
 
     @PostMapping
-    public Teacher create(@RequestBody Teacher teacher) {
-        return teacherService.create(teacher);
+    @Operation(summary = "Добавить преподавателя")
+    public TeacherResponseDto create(
+            @Parameter(description = "Данные преподавателя")
+            @Valid @RequestBody TeacherRequestDto dto
+    ) {
+        return teacherService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public Teacher update(@PathVariable Long id, @RequestBody Teacher updated) {
-        return teacherService.update(id, updated);
+    @Operation(summary = "Обновить данные преподавателя")
+    public TeacherResponseDto update(
+            @Parameter(description = "ID преподавателя") @PathVariable Long id,
+            @Parameter(description = "Обновлённые данные")
+            @Valid @RequestBody TeacherRequestDto dto
+    ) {
+        return teacherService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @Operation(summary = "Удалить преподавателя")
+    public void delete(
+            @Parameter(description = "ID преподавателя") @PathVariable Long id
+    ) {
         teacherService.delete(id);
     }
 }
