@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 
 //TODO на все сервисы мб интерфейсы прикрутить
 @Service
@@ -62,6 +63,7 @@ public class LessonService {
         return lessonMapper.toDto(lesson);
     }
 
+
     public LessonResponseDto update(Long id, LessonRequestDto dto) {
         log.info(
                 "update lesson: groupId={}, teacherId={}, day={}, time={}–{}",
@@ -104,11 +106,29 @@ public class LessonService {
     }
 
     public List<LessonResponseDto> getByGroupAndDay(Long groupId, DayOfWeek day) {
-        log.info("get lesson by groupId and day: groupId={}, day={}", groupId, day.toString());
-        return lessonRepository.findByGroupIdAndDayOfWeek(groupId, day)
-                .orElseThrow(() -> new NotFoundException("Lesson not found"))
-                .stream()
+        log.info("get lesson by groupId and day: groupId={}, day={}", groupId, day);
+        List<Lesson> lessons = (day == null)
+                ? lessonRepository.findByGroupId(groupId)
+                : lessonRepository.findByGroupIdAndDayOfWeek(groupId, day);
+
+        return lessons.stream()
                 .map(lessonMapper::toDto)
                 .toList();
     }
+
+    public List<LessonResponseDto> getScheduleForTeacher(
+            Long teacherId,
+            DayOfWeek day
+    ) {
+        log.info("get schedule for teacherId={}, day={}", teacherId, day);
+
+        List<Lesson> lessons = (day == null)
+                ? lessonRepository.findByTeacherId(teacherId)
+                : lessonRepository.findByTeacherIdAndDayOfWeek(teacherId, day);
+
+        return lessons.stream()
+                .map(lessonMapper::toDto)
+                .toList();
+    }
+
 }
