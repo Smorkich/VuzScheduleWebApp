@@ -40,8 +40,10 @@ public class GroupService {
     public GroupResponseDto create(GroupRequestDto dto) {
         log.info("create group: name={}, course={}", dto.name(), dto.course());
         Group group = groupMapper.toEntity(dto);
-        groupRepository.save(group);
-        return groupMapper.toDto(group);
+        Group saved = groupRepository.save(group);
+        return groupMapper.toDto(saved);
+        //groupRepository.save(group);
+        //return groupMapper.toDto(group);
     }
 
     public GroupResponseDto update(Long id, GroupRequestDto updated) {
