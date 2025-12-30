@@ -9,11 +9,13 @@ import java.util.Optional;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
-    Optional<List<Lesson>> findByGroupId(Long groupId);
+    List<Lesson> findByGroupId(Long groupId);
 
-    Optional<List<Lesson>> findByTeacherId(Long teacherId);
+    List<Lesson> findByTeacherId(Long teacherId);
 
-    Optional<List<Lesson>> findByDayOfWeek(DayOfWeek dayOfWeek);
+    List<Lesson> findByTeacherIdAndDayOfWeek(Long teacherId, DayOfWeek day);
 
-    Optional<List<Lesson>> findByGroupIdAndDayOfWeek(Long groupId, DayOfWeek dayOfWeek);
+    List<Lesson> findByDayOfWeek(DayOfWeek dayOfWeek);
+
+    List<Lesson> findByGroupIdAndDayOfWeek(Long groupId, DayOfWeek dayOfWeek);
 }
