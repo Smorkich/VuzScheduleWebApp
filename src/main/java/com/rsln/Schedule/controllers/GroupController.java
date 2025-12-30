@@ -6,6 +6,8 @@ import com.rsln.Schedule.services.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +38,9 @@ public class GroupController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Создать новую группу")
+    @ResponseStatus(HttpStatus.CREATED)
     public GroupResponseDto create(
             @Parameter(description = "Данные новой группы") @RequestBody GroupRequestDto group
     ) {
@@ -44,6 +48,7 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Обновить данные группы")
     public GroupResponseDto update(
             @Parameter(description = "ID группы") @PathVariable Long id,
@@ -53,7 +58,9 @@ public class GroupController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Удалить группу")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
             @Parameter(description = "ID группы") @PathVariable Long id
     ) {

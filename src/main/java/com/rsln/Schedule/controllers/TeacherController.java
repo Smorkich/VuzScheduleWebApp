@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class TeacherController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Добавить преподавателя")
     public TeacherResponseDto create(
             @Parameter(description = "Данные преподавателя")
@@ -47,6 +49,7 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Обновить данные преподавателя")
     public TeacherResponseDto update(
             @Parameter(description = "ID преподавателя") @PathVariable Long id,
@@ -57,6 +60,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Удалить преподавателя")
     public void delete(
             @Parameter(description = "ID преподавателя") @PathVariable Long id
