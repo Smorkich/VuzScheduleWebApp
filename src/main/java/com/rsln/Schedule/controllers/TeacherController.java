@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,46 +27,14 @@ public class TeacherController {
 
     @GetMapping
     @Operation(summary = "Получить список преподавателей")
-    public List<TeacherResponseDto> getAll() {
-        return teacherService.getAll();
+    public ResponseEntity<List<TeacherResponseDto>> getAll() {
+        return ResponseEntity.ok(teacherService.getAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить преподавателя по ID")
-    public TeacherResponseDto getById(
-            @Parameter(description = "ID преподавателя") @PathVariable Long id
-    ) {
-        return teacherService.getById(id);
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Добавить преподавателя")
-    public TeacherResponseDto create(
-            @Parameter(description = "Данные преподавателя")
-            @Valid @RequestBody TeacherRequestDto dto
-    ) {
-        return teacherService.create(dto);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Обновить данные преподавателя")
-    public TeacherResponseDto update(
-            @Parameter(description = "ID преподавателя") @PathVariable Long id,
-            @Parameter(description = "Обновлённые данные")
-            @Valid @RequestBody TeacherRequestDto dto
-    ) {
-        return teacherService.update(id, dto);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Удалить преподавателя")
-    public void delete(
-            @Parameter(description = "ID преподавателя") @PathVariable Long id
-    ) {
-        teacherService.delete(id);
+    public ResponseEntity<TeacherResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getById(id));
     }
 }
 

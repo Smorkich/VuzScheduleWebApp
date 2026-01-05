@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,45 +27,13 @@ public class SubjectController {
 
     @GetMapping
     @Operation(summary = "Получить список предметов")
-    public List<SubjectResponseDto> getAll() {
-        return subjectService.getAll();
+    public ResponseEntity<List<SubjectResponseDto>> getAll() {
+        return ResponseEntity.ok(subjectService.getAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить предмет по ID")
-    public SubjectResponseDto getById(
-            @Parameter(description = "ID предмета") @PathVariable Long id
-    ) {
-        return subjectService.getById(id);
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Создать новый предмет")
-    public SubjectResponseDto create(
-            @Parameter(description = "Данные предмета")
-            @Valid @RequestBody SubjectRequestDto dto
-    ) {
-        return subjectService.create(dto);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Обновить предмет")
-    public SubjectResponseDto update(
-            @Parameter(description = "ID предмета") @PathVariable Long id,
-            @Parameter(description = "Обновлённые данные")
-            @Valid @RequestBody SubjectRequestDto dto
-    ) {
-        return subjectService.update(id, dto);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Удалить предмет")
-    public void delete(
-            @Parameter(description = "ID предмета") @PathVariable Long id
-    ) {
-        subjectService.delete(id);
+    public ResponseEntity<SubjectResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(subjectService.getById(id));
     }
 }

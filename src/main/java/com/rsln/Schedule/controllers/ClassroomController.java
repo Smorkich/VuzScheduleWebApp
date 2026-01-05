@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,36 +26,13 @@ public class ClassroomController {
 
     @GetMapping
     @Operation(summary = "Получить все аудитории")
-    public List<ClassroomResponseDto> getAll() {
-        return service.getAll();
+    public ResponseEntity<List<ClassroomResponseDto>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить аудиторию по ID")
-    public ClassroomResponseDto getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Создать аудиторию")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ClassroomResponseDto create(@Valid @RequestBody ClassroomRequestDto dto) {
-        return service.create(dto);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Обновить аудиторию")
-    public ClassroomResponseDto update(@PathVariable Long id, @Valid @RequestBody ClassroomRequestDto dto) {
-        return service.update(id, dto);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Удалить аудиторию")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ClassroomResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 }

@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,77 +26,38 @@ public class LessonController {
     public LessonController(LessonService lessonService) {
         this.lessonService = lessonService;
     }
-//TODO ReponseEntity на методы
+
     @GetMapping
-    @Operation(summary = "Получить список всех занятий")
-    public List<LessonResponseDto> getAll() {
-        return lessonService.getAll();
+    @Operation(summary = "Получить все занятия")
+    public ResponseEntity<List<LessonResponseDto>> getAll() {
+        return ResponseEntity.ok(lessonService.getAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Получить занятие по ID")
-    public LessonResponseDto getById(
-            @Parameter(description = "ID занятия") @PathVariable Long id
-    ) {
-        return lessonService.getById(id);
-    }
-
-    @PostMapping
-    @Operation(summary = "Создать занятие")
-    @PreAuthorize("hasRole('ADMIN')")
-    public LessonResponseDto create(
-            @Parameter(description = "Данные занятия")
-            @Valid @RequestBody LessonRequestDto dto
-    ) {
-        return lessonService.create(dto);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Обновить занятие")
-    public LessonResponseDto update(
-            @Parameter(description = "ID занятия") @PathVariable Long id,
-            @Parameter(description = "Обновлённые данные")
-            @Valid @RequestBody LessonRequestDto dto
-    ) {
-        return lessonService.update(id, dto);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Удалить занятие")
-    public void delete(
-            @Parameter(description = "ID занятия") @PathVariable Long id
-    ) {
-        lessonService.delete(id);
+    public ResponseEntity<LessonResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(lessonService.getById(id));
     }
 
     @GetMapping("/by-group/{groupId}")
-    @Operation(summary = "Получить все занятия группы (без фильтра по дню)")
-    public List<LessonResponseDto> getByGroup(
-            @Parameter(description = "ID группы") @PathVariable Long groupId
-    ) {
-        return lessonService.getByGroupAndDay(groupId, null);
+    public ResponseEntity<List<LessonResponseDto>> getByGroup(@PathVariable Long groupId) {
+        return ResponseEntity.ok(lessonService.getByGroupAndDay(groupId, null));
     }
 
     @GetMapping("/schedule")
-    @Operation(summary = "Получить расписание группы на определённый день")
-    public List<LessonResponseDto> getSchedule(
-            @Parameter(description = "ID группы") @RequestParam Long groupId,
-            @Parameter(description = "День недели (MONDAY, TUESDAY, ...)")
-            @RequestParam(required = false) DayOfWeek day
-    ) {
-        return lessonService.getByGroupAndDay(
-                groupId,
-                day
-        );
+    public ResponseEntity<List<LessonResponseDto>> getSchedule(
+            @RequestParam Long groupId,
+            @RequestParam(required = false) DayOfWeek day,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        if (date != null) {
+            return ResponseEntity.ok(lessonService.getByGroupAndDate(groupId, date));
+        }
+        return ResponseEntity.ok(lessonService.getByGroupAndDay(groupId, day));
     }
 
     @GetMapping("/schedule/teacher")
-    public List<LessonResponseDto> getTeacherSchedule(
+    public ResponseEntity<List<LessonResponseDto>> getTeacherSchedule(
             @RequestParam Long teacherId,
-            @RequestParam(required = false) DayOfWeek day
-    ) {
-        return lessonService.getScheduleForTeacher(teacherId, day);
+            @RequestParam(required = false) DayOfWeek day) {
+        return ResponseEntity.ok(lessonService.getScheduleForTeacher(teacherId, day));
     }
 }
