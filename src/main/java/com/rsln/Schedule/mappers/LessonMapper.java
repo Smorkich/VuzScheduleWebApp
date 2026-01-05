@@ -37,6 +37,7 @@ public class LessonMapper {
         lesson.setTeacher(teacherRepository.findById(dto.teacherId()).orElseThrow());
         lesson.setClassroom(classroomRepository.findById(dto.classroomId()).orElseThrow());
 
+        lesson.setLessonDate(dto.lessonDate());
         lesson.setLessonType(dto.lessonType());
         lesson.setDayOfWeek(dto.dayOfWeek());
         lesson.setStartTime(dto.startTime());
@@ -57,6 +58,7 @@ public class LessonMapper {
         lesson.setTeacher(teacher);
         lesson.setClassroom(classroom);
         lesson.setLessonType(dto.lessonType());
+        lesson.setLessonDate(dto.lessonDate());
         lesson.setDayOfWeek(dto.dayOfWeek());
         lesson.setStartTime(dto.startTime());
         lesson.setEndTime(dto.endTime());
@@ -70,6 +72,7 @@ public class LessonMapper {
                 new TeacherResponseDto(entity.getTeacher().getId(), entity.getTeacher().getFullName(), entity.getTeacher().getDepartment()),
                 new ClassroomResponseDto(entity.getClassroom().getId(), entity.getClassroom().getName()),
                 entity.getLessonType(),
+                entity.getLessonDate(),
                 entity.getDayOfWeek(),
                 entity.getStartTime(),
                 entity.getEndTime()
