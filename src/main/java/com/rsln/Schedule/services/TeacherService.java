@@ -6,6 +6,7 @@ import com.rsln.Schedule.exceptions.NotFoundException;
 import com.rsln.Schedule.mappers.TeacherMapper;
 import com.rsln.Schedule.models.Teacher;
 import com.rsln.Schedule.repositories.TeacherRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,12 +47,14 @@ public class TeacherService {
         return teacherMapper.toDto(teacherRepository.save(teacher));
     }
 
+    @Transactional
     public TeacherResponseDto update(Long id, TeacherRequestDto dto) {
         log.info("update teacher: id={}, name={}, department={}", id, dto.fullName(), dto.department());
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Преподаватель не найден"));
 
         teacher.setFullName(dto.fullName());
+        teacher.setDepartment(dto.department());
 
         return teacherMapper.toDto(teacherRepository.save(teacher));
     }

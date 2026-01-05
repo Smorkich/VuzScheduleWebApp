@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,6 +130,11 @@ public class LessonService {
         return lessons.stream()
                 .map(lessonMapper::toDto)
                 .toList();
+    }
+    public List<LessonResponseDto> getByGroupAndDate(Long groupId, LocalDate date) {
+        log.info("Запрос расписания: groupId={}, date={}", groupId, date);
+        return lessonRepository.findByGroupIdAndLessonDate(groupId, date)
+                .stream().map(lessonMapper::toDto).toList();
     }
 
 }

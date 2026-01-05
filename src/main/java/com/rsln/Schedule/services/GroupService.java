@@ -7,6 +7,7 @@ import com.rsln.Schedule.mappers.GroupMapper;
 import com.rsln.Schedule.models.Classroom;
 import com.rsln.Schedule.models.Group;
 import com.rsln.Schedule.repositories.GroupRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,11 +47,13 @@ public class GroupService {
         //return groupMapper.toDto(group);
     }
 
+    @Transactional
     public GroupResponseDto update(Long id, GroupRequestDto updated) {
         log.info("update group: id={}, name={}, course={}", id, updated.name(), updated.course());
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Группа не найдена"));
         group.setName(updated.name());
+        group.setCourse(updated.course());
         return groupMapper.toDto(groupRepository.save(group));
     }
 
