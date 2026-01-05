@@ -7,6 +7,7 @@ import com.rsln.Schedule.dtos.group.GroupResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Schema(description = "DTO для отображения занятия")
@@ -28,6 +29,8 @@ public record LessonResponseDto(
 
         @Schema(description = "Тип занятия", example = "Лекция")
         String lessonType,
+
+        LocalDate lessonDate,
 
         @Schema(description = "День недели", example = "MONDAY")
         DayOfWeek dayOfWeek,

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -24,6 +25,9 @@ public class Lesson extends BaseEntity {
 
     private String lessonType;
 
+    @Column(nullable = false, name = "lesson_date")
+    private LocalDate lessonDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DayOfWeek dayOfWeek;
@@ -34,7 +38,16 @@ public class Lesson extends BaseEntity {
     @Column(nullable = false)
     private LocalTime endTime;
 
+
     public Lesson() {
+    }
+
+    public LocalDate getLessonDate() {
+        return lessonDate;
+    }
+
+    public void setLessonDate(LocalDate lessonDate) {
+        this.lessonDate = lessonDate;
     }
 
     public Group getGroup() {

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Schema(description = "DTO для создания/обновления занятия")
@@ -26,6 +27,9 @@ public record LessonRequestDto(
 
         @Schema(description = "Тип занятия", example = "Лекция")
         String lessonType,
+
+        @NotNull(message = "Дата обязательна")
+        LocalDate lessonDate, // ДОБАВИТЬ
 
         @NotNull(message = "День недели обязателен")
         @Schema(description = "День недели", example = "MONDAY")
