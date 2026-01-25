@@ -1,13 +1,22 @@
 package com.rsln.Schedule.controllers;
 
+import com.rsln.Schedule.dtos.teacher.TeacherRequestDto;
+import com.rsln.Schedule.dtos.teacher.TeacherResponseDto;
 import com.rsln.Schedule.models.Teacher;
 import com.rsln.Schedule.services.TeacherService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/teachers")
+@Tag(name = "Teachers", description = "Управление преподавателями")
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -17,28 +26,15 @@ public class TeacherController {
     }
 
     @GetMapping
-    public List<Teacher> getAll() {
-        return teacherService.getAll();
+    @Operation(summary = "Получить список преподавателей")
+    public ResponseEntity<List<TeacherResponseDto>> getAll() {
+        return ResponseEntity.ok(teacherService.getAll());
     }
 
     @GetMapping("/{id}")
-    public Teacher getById(@PathVariable Long id) {
-        return teacherService.getById(id);
-    }
-
-    @PostMapping
-    public Teacher create(@RequestBody Teacher teacher) {
-        return teacherService.create(teacher);
-    }
-
-    @PutMapping("/{id}")
-    public Teacher update(@PathVariable Long id, @RequestBody Teacher updated) {
-        return teacherService.update(id, updated);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        teacherService.delete(id);
+    @Operation(summary = "Получить преподавателя по ID")
+    public ResponseEntity<TeacherResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getById(id));
     }
 }
 

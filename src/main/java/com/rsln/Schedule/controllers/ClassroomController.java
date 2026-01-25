@@ -1,43 +1,38 @@
 package com.rsln.Schedule.controllers;
 
-import com.rsln.Schedule.models.Classroom;
+import com.rsln.Schedule.dtos.classroom.ClassroomRequestDto;
+import com.rsln.Schedule.dtos.classroom.ClassroomResponseDto;
 import com.rsln.Schedule.services.ClassroomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/classrooms")
+@Tag(name = "Classrooms", description = "Управление аудиториями")
 public class ClassroomController {
 
-    private final ClassroomService classroomService;
+    private final ClassroomService service;
 
-    public ClassroomController(ClassroomService classroomService) {
-        this.classroomService = classroomService;
+    public ClassroomController(ClassroomService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<Classroom> getAll() {
-        return classroomService.getAll();
+    @Operation(summary = "Получить все аудитории")
+    public ResponseEntity<List<ClassroomResponseDto>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    public Classroom getById(@PathVariable Long id) {
-        return classroomService.getById(id);
-    }
-
-    @PostMapping
-    public Classroom create(@RequestBody Classroom classroom) {
-        return classroomService.create(classroom);
-    }
-
-    @PutMapping("/{id}")
-    public Classroom update(@PathVariable Long id, @RequestBody Classroom updated) {
-        return classroomService.update(id, updated);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        classroomService.delete(id);
+    @Operation(summary = "Получить аудиторию по ID")
+    public ResponseEntity<ClassroomResponseDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 }
