@@ -40,22 +40,14 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-//                .formLogin(
-//                        form -> form
-//                                .loginProcessingUrl("/login")  // куда POST идёт
-//                                .defaultSuccessUrl("/admin", true)
-//                                .failureUrl("/login?error")
-//                                .permitAll()
-//                )
-//                .logout(logout -> logout
-//                        .logoutUrl("/logout")
-//                        .logoutSuccessUrl("/login")
-//                        .permitAll()
-//                )
 
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**"
+                                ).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/api/lessons/by-group/**", "/api/lessons/schedule").permitAll()
@@ -68,7 +60,6 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll() // пока всё открыто
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        //.httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
